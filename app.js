@@ -26,6 +26,40 @@ class Doctor extends Person {
         this.appointments.push(newAppointment);
         patient.addAppointment(newAppointment);
     }
+
+    examinePatient(patient) {
+        // Remove appointment for both
+        let appointment = this.appointments.shift();
+        patient.appointments.shift();
+
+        // Simulate examination
+        if (appointment.type === 'BSExamination') {
+            this.performBSExamination(patient);
+        } else if (appointment.type === 'BPExamination') {
+            this.performBPExamination(patient);
+        } else {
+            console.error('Unknown examination type');
+        }
+
+        // Log event
+        logEvent(getTimeDateStr(), `Pacijent ${patient.firstName} pregledan`);
+    }
+
+    performBSExamination(patient) {
+        let bloodSugar = Math.floor(Math.random() * (10 - 1) + 1);
+        let patientName = `${patient.firstName} ${patient.lastName}`;
+        console.log('Rezultati pregleda šećera u krvi:');
+        console.log(`Ime pacijenta: ${patientName}`);
+        console.log(`Nivo šećera: ${bloodSugar}`);
+    }
+
+    performBPExamination(patient) {
+        let bloodPressure = Math.floor(Math.random() * (100 - 1) + 1);
+        let patientName = `${patient.firstName} ${patient.lastName}`;
+        console.log('Rezultati krvnog pritiska:');
+        console.log(`Ime pacijenta ${patientName}`);
+        console.log(`Krvni pritisak: ${bloodPressure}`);
+    }
 }
 
 // Patient class
@@ -49,11 +83,11 @@ class Patient extends Person {
 
 // Appointment class
 class Appointment {
-    constructor(type, date, time) {
-        this.type = type;
+    constructor(date, time, type) {
         this.date = date;
         this.time = time;
-        logEvent(getTimeDateStr(), 'Zakazan pregled');
+        this.type = type;
+        logEvent(getTimeDateStr(), `Zakazan pregled za ${this.date}`);
     }
 }
 
@@ -66,11 +100,15 @@ function getTimeStr() {
     return `${hh}:${mm}`;
 }
 
-function getDateStr() {
-    let today = new Date(),
+function getDateStr(isAppointment) {
+    var today = new Date(),
         dd = today.getDate(),
         mm = today.getMonth(),
         yyyy = today.getFullYear();
+
+    if (isAppointment) {
+        mm += 1;
+    }
     
     return `${dd}.${mm}.${yyyy}`;
 }
@@ -98,7 +136,7 @@ patient1.doctor = doctor1;
 /* Doktor Milan zakazuje pregled za merenje nivoa šećera
 u krvi za pacijenta Dragan */
 doctor1.setAppointment(
-    getDateStr(),
+    getDateStr(true),
     getTimeStr(),
     'BSExamination',
     patient1
@@ -107,7 +145,7 @@ doctor1.setAppointment(
 /* Doktor Milan zakazuje pregled za merenje krvnog pritiska 
 za pacijenta Dragan */
 doctor1.setAppointment(
-    getDateStr(),
+    getDateStr(true),
     getTimeStr(),
     'BPExamination',
     patient1
@@ -115,6 +153,8 @@ doctor1.setAppointment(
 
 /* Pacijent Dragan obavlja laboratorijski pregled za merenje 
 nivoa šećera u krvi */
+doctor1.examinePatient(patient1);
+doctor1.examinePatient(patient1);
 
 /* Pacijent Dragan obavlja laboratorijski pregled za merenje 
 krvnog pritiska */
