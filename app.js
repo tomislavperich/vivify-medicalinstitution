@@ -154,10 +154,10 @@ doctor1.setAppointment(
 /* Pacijent Dragan obavlja laboratorijski pregled za merenje 
 nivoa šećera u krvi */
 doctor1.examinePatient(patient1);
-doctor1.examinePatient(patient1);
 
 /* Pacijent Dragan obavlja laboratorijski pregled za merenje 
 krvnog pritiska */
+doctor1.examinePatient(patient1);
 
 console.log(doctor1);
 console.log(patient1);
