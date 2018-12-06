@@ -8,6 +8,7 @@ class Person {
     }
 }
 
+
 // Doctor class
 class Doctor extends Person {
     constructor(fname, lname, specialty, patients = [], appointments) {
@@ -21,16 +22,22 @@ class Doctor extends Person {
         this.patients.push(patient);
     }
 
+    // Appointments
     setAppointment(date, time, type, patient) {
         let newAppointment = new Appointment(date, time, type);
         this.appointments.push(newAppointment);
         patient.addAppointment(newAppointment);
     }
 
+    completeAppointment(patientAppt) {
+        let appts = this.appointments;
+        this.appointments = appts.filter(appt => appt == patientAppt);
+    }
+
+    // Examination
     examinePatient(patient) {
         // Remove appointment for both
-        let appointment = this.appointments.shift();
-        patient.appointments.shift();
+        let appointment = patient.appointments[0];
 
         // Simulate examination
         if (appointment.type === 'BSExamination') {
@@ -40,6 +47,10 @@ class Doctor extends Person {
         } else {
             console.error('Unknown examination type');
         }
+
+        // Complete appointment
+        this.completeAppointment(appointment);
+        patient.completeAppointment(appointment);
 
         // Log event
         logEvent(getTimeDateStr(), `Pacijent ${patient.firstName} pregledan`);
@@ -62,6 +73,7 @@ class Doctor extends Person {
     }
 }
 
+
 // Patient class
 class Patient extends Person {
     constructor(fname, lname, jmbg, caseNum, doctor = null, appointments) {
@@ -79,7 +91,13 @@ class Patient extends Person {
     addAppointment(appointment) {
         this.appointments.push(appointment);
     }
+
+    completeAppointment(patientAppt) {
+        let appts = this.appointments;
+        this.appointments = appts.filter(appt => appt == patientAppt);
+    }
 }
+
 
 // Appointment class
 class Appointment {
@@ -90,6 +108,7 @@ class Appointment {
         logEvent(getTimeDateStr(), `Zakazan pregled za ${this.date}`);
     }
 }
+
 
 // Date functions
 function getTimeStr() {
@@ -157,7 +176,6 @@ doctor1.examinePatient(patient1);
 
 /* Pacijent Dragan obavlja laboratorijski pregled za merenje 
 krvnog pritiska */
-doctor1.examinePatient(patient1);
 
 console.log(doctor1);
 console.log(patient1);
